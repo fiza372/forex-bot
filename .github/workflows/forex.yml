@@ -1,0 +1,21 @@
+name: forex-scan
+
+on:
+  schedule:
+    - cron: "3 * * * 1-5"   # every hour at minute 3, Monday to Friday (UTC)
+  workflow_dispatch:         # lets you press a Run button to test
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install yfinance pandas numpy requests
+      - run: python forex_assistant.py once
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
